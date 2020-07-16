@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+html
+    head
+        title Search Results
+        link(rel='stylesheet' href='../stylesheets/style.css')
+    body
+        h1 Search Results for '#{searchTerm}'        
+        a(href="/books") ⬅ Go back!
+        
+        if results.length > 0
+            table
+                thead
+                    tr
+                        th Title
+                        th Author
+                        th Genre
+                        th Year
+                tbody
+                    each result in results
+                        tr
+                            td
+                                a(href=`/books/${result.id}`) #{result.title}
+                            td #{result.author}
+                            td #{result.genre}
+                            td #{result.year}
+        else
+            p No results to show for your search critera!
