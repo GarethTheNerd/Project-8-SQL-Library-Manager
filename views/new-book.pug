@@ -6,6 +6,13 @@ html
 
     body
         h1 New Book
+        if errors.length > 0
+            h2(class="error") Oooops!
+            ul(class="error")
+            each error in errors
+                li=error
+
+
         form(method="post")
             p
                 label(for="title") Title
@@ -22,4 +29,4 @@ html
             p
                 input(type="submit" value="Create New Book")
             p
-                a(class="button" href="/books") Cancel
+                a(class="button" href="/books/page/1") Cancel

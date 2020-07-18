@@ -106,3 +106,6 @@ input#search {
   margin: 0px;
   margin-left: 10px;
 }
+.page-links {
+  padding: 10px;
+}

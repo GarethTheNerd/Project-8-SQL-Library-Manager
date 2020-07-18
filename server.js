@@ -5,12 +5,12 @@ const HTTPPort = 3000;
 const Sequilize = require('sequelize');
 
 function asyncHandler(cb){
-    return async(req, res, next) => {
-        try {
-            await cb(req, res, next)
-        } catch(error){
-        res.status(500).send(error);
+    try {
+        return async(req, res, next) => {
+            await cb(req, res, next);
         }
+    } catch(error) {
+        throw error;
     }
 }
 
@@ -21,16 +21,35 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', asyncHandler(async (req, res) => {
-    res.redirect('/books');
+    res.redirect('/books/page/1');
 }));
 
-app.get('/books', asyncHandler(async (req, res) => {
-    const books = await Book.findAll();
-    res.render('all_books', {books});
+app.get('/books/', asyncHandler(async (req, res, next) => {
+    res.redirect('/books/page/1');
+}));
+
+app.get('/books/page/:pageNum', asyncHandler(async (req, res, next) => {
+
+
+    const itemsPerPage = 10;
+    const pageNum = req.params.pageNum;
+
+    const offset = (pageNum - 1) * itemsPerPage;
+
+    const allBooks = await Book.findAll();
+    const rowCount = allBooks.length;
+    const totalPages = Math.ceil(rowCount / itemsPerPage);
+
+    const books = await Book.findAll({
+        offset: offset,
+        limit: itemsPerPage
+    });
+    res.render('index', {books, totalPages, pageNum});
 }));
 
 app.get('/books/new', asyncHandler(async (req, res) => {
-    res.render('new_book');
+    const errors = [];
+    res.render('new-book', {errors});
 }));
 
 app.post('/books/new', asyncHandler(async (req, res) => {
@@ -40,26 +59,28 @@ app.post('/books/new', asyncHandler(async (req, res) => {
     });
     try {
         await newBook.save();
-        res.redirect('/books');
+        res.redirect('/books/page/1');
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             const errors = error.errors.map(err => err.message);
-            //We need to print errors here!
-            console.error('Validation errors: ', errors);
+            res.render("new-book", {errors});
         } else {
             throw error;
         }
-    }
-    
+    }    
 }));
 
 app.get('/books/:id', asyncHandler(async (req, res) => {
-    const book = await Book.findOne({
-        where: {
-            id: req.params.id
-        }
-    });
-    res.render('book_detail', {book});
+
+        const book = await Book.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+
+            const errors = [];
+            res.render('update-book', {book, errors});
+        
 }));
 
 app.post('/books/:id', asyncHandler(async (req, res) => {
@@ -69,13 +90,36 @@ app.post('/books/:id', asyncHandler(async (req, res) => {
         }
     });
     
-    book.title = req.body.title;
-    book.author = req.body.author;
-    book.genre = req.body.genre;
-    book.year = req.body.year;
+    if(book != null) {
+        book.title = req.body.title;
+        book.author = req.body.author;
+        book.genre = req.body.genre;
+        book.year = req.body.year;
+    
+        try {
+            await book.save();
+            res.redirect('/books/page/1');
+        } catch (error) {
+            if (error.name === 'SequelizeValidationError') {
+                const errors = error.errors.map(err => err.message);
+                console.log(req.body.book);
+                res.render("update-book", {
+                    errors,
+                    book: {
+                    title: req.body.title,
+                    author: req.body.author,
+                    genre: req.body.genre,
+                    year: req.body.year
+                }});
+            } else {
+                throw error;
+            }
+        }
+    } else {
+        throw new Error;
+    }
 
-    await book.save();
-    res.redirect('/books');
+    
 }));
 
 app.post('/books/:id/delete', asyncHandler(async (req, res) => {
@@ -87,13 +131,12 @@ app.post('/books/:id/delete', asyncHandler(async (req, res) => {
     });
 
     await book.destroy();
-    res.redirect('/books');
+    res.redirect('/books/page/1');
 }));
 
 app.post('/search', asyncHandler(async (req, res) => {
     
     const searchTerm = req.body.search;
-    console.log(`Search Term: ${searchTerm}`);
     
     const results = await Book.findAll({
         where: {
@@ -124,19 +167,12 @@ app.post('/search', asyncHandler(async (req, res) => {
 
 app.use(function (req, res, next) {
     res.status(404);
-    res.render('not_found');
-    next();
-})
+    res.render('page-not-found');
+});
 
 app.use((err, req, res, next) => {
-
-    if (err.name === 'SequelizeValidationError') {
-        const errors = error.errors.map(err => err.message);
-        console.log(errors);
-    } else {
-        res.status(500);
-        res.render("error");
-    }
+    res.status(500);
+    res.render("error");
 });
 
 app.listen(HTTPPort, 
