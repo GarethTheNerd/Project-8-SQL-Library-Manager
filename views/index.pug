@@ -1,38 +1,38 @@
-<!DOCTYPE html>
-html
-    head
-        title Books
-        link(rel='stylesheet' href='../../stylesheets/style.css')
-    body
-        h1 Books        
-        p 
-            a(class='button' href='/books/new') Create New Book
-        p
-            form(method="post" action="search")
-                input(type="text" name="search" id="search" placeholder="Search..." required)
-                input(type="submit" value="Search 🔍" id="btn-search")
-        if books.length > 0
-            table
-                thead
+extends layout.pug
+    
+block append head
+    title Books
+
+block content
+    h1 Books        
+    p 
+        a(class='button' href='/books/new') Create New Book
+    p
+        form(method="post" action="search")
+            input(type="text" name="search" id="search" placeholder="Search..." required)
+            input(type="submit" value="Search 🔍" id="btn-search")
+    if books.length > 0
+        table
+            thead
+                tr
+                    th Title
+                    th Author
+                    th Genre
+                    th Year
+            tbody
+                each book in books
                     tr
-                        th Title
-                        th Author
-                        th Genre
-                        th Year
-                tbody
-                    each book in books
-                        tr
-                            td
-                                a(href=`/books/${book.id}`) #{book.title}
-                            td #{book.author}
-                            td #{book.genre}
-                            td #{book.year}
-            span Page #{pageNum} of #{totalPages}
-            br
-            br
-            - var n = 0;
-            while n < totalPages
-                span.page-links
-                    a(href=`/books/page/${n + 1}`)= n++ + 1
-        else
-            p No results to show!
+                        td
+                            a(href=`/books/${book.id}`) #{book.title}
+                        td #{book.author}
+                        td #{book.genre}
+                        td #{book.year}
+        span Page #{pageNum} of #{totalPages}
+        br
+        br
+        - var n = 0;
+        while n < totalPages
+            span.page-links
+                a(href=`/books/page/${n + 1}`)= n++ + 1
+    else
+        p No results to show!

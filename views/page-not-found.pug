@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-html
+extends layout.pug
+    
+block append head
+    title Page Not Found
 
-    head
-        title Page Not Found
-        link(rel="stylesheet" href="../stylesheets/style.css")
-
-    body
-        h1 Page Not Found
-        p Sorry! We couldn't find the page you were looking for.
-        br
-        p   
-            a(class="button" href="/books/page/1") Home
+block content
+    h1 Page Not Found
+    p Sorry! We couldn't find the page you were looking for.
+    br
+    p   
+        a(class="button" href="/books/page/1") Home

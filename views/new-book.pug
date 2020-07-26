@@ -1,32 +1,31 @@
-<!DOCTYPE html>
-html
-    head
-        title New Book
-        link(rel="stylesheet" href="../stylesheets/style.css")
+extends layout.pug
+    
+block append head
+    title New Book
 
-    body
-        h1 New Book
-        if errors.length > 0
-            h2(class="error") Oooops!
-            ul(class="error")
-            each error in errors
-                li=error
+block content
+    h1 New Book
+    if errors.length > 0
+        h2(class="error") Oooops!
+        ul(class="error")
+        each error in errors
+            li=error
 
 
-        form(method="post")
-            p
-                label(for="title") Title
-                input(name="title" type="text" id="title")
-            p
-                label(for="author") Author
-                input(name="author" type="text" id="author")
-            p
-                label(for="genre") Genre
-                input(name="genre" type="text" id="genre")
-            p
-                label(for="year") Year
-                input(name="year" type="text" id="year")
-            p
-                input(type="submit" value="Create New Book")
-            p
-                a(class="button" href="/books/page/1") Cancel
+    form(method="post")
+        p
+            label(for="title") Title
+            input(name="title" type="text" id="title")
+        p
+            label(for="author") Author
+            input(name="author" type="text" id="author")
+        p
+            label(for="genre") Genre
+            input(name="genre" type="text" id="genre")
+        p
+            label(for="year") Year
+            input(name="year" type="text" id="year")
+        p
+            input(type="submit" value="Create New Book")
+        p
+            a(class="button" href="/books/page/1") Cancel
