@@ -30,7 +30,7 @@ app.get('/', asyncHandler(async (req, res) => {
 }));
 
 //This function handles the /books route. We are just redirecting to page 1 as we have multiple pages and they haven't defined one
-app.get('/books/', asyncHandler(async (req, res, next) => {
+app.get('/books', asyncHandler(async (req, res, next) => {
     res.redirect('/books/page/1');
 }));
 
