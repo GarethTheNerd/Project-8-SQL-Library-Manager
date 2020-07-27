@@ -8,7 +8,7 @@ block content
     p 
         a(class='button' href='/books/new') Create New Book
     p
-        form(method="post" action="search")
+        form(method="post" action="/search")
             input(type="text" name="search" id="search" placeholder="Search..." required)
             input(type="submit" value="Search 🔍" id="btn-search")
     if books.length > 0
